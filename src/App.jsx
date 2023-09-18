@@ -5,8 +5,9 @@ import CreatePost from './CreatePost';
 import Posts from './Posts';
 import Post from './Post';
 import AboutUs from './AboutUs';
-
+import Contact from './Contact';
 import { useNavigate, useParams, Link, Routes, Route } from 'react-router-dom';
+import axios from 'axios';
 
 function App() {
   const [auth, setAuth] = useState({});
@@ -56,6 +57,24 @@ function App() {
     navigate(`/posts/${post._id}`);
   };
 
+  const editPost = async(post) => {
+    const response = await axios.put(`https://strangers-things.herokuapp.com/api/2209-FTB-ET-WEB-FT/posts/${post.id}`, post);
+    console.log(response);
+  }
+
+  const deletePost = async(post)=> {
+    await axios.delete(`https://strangers-things.herokuapp.com/api/2209-FTB-ET-WEB-FT/posts/${post.id}`);
+    setPosts(posts.filter(_post => _post.id !== post.id));
+  };
+
+
+  const UserPostNum = () => {
+    const userArr = posts.filter(post => auth._id === post.author._id);
+    return (
+      userArr.length
+    );
+  };
+
 
   return (
     <>
@@ -64,11 +83,14 @@ function App() {
         auth.username ? (
           <div>
             <h1>
-              Welcome { auth.username }
+              Welcome { auth.username } ({UserPostNum})
               <button onClick={ logout }>Logout</button>
             </h1>
+            <div className='nav'>
             <Link to='/posts/create'>Create A Post</Link>
             <Link to='/about_us'>About Us</Link>
+            <Link to='/contact'>Contact Us</Link>
+            </div>
             <Routes>
               <Route path='/posts/create' element={ <CreatePost createPost={ createPost } />} />
             </Routes>
@@ -78,6 +100,7 @@ function App() {
             <AuthForm submit={ register } txt='Register'/>
             <AuthForm submit={ login } txt='Login'/>
             <Link to='/about_us'>About Us</Link>
+            <Link to='/contact'>Contact Us</Link>
           </>
         )
       }
@@ -85,6 +108,7 @@ function App() {
       <Routes>
         <Route path='/posts/:id' element={ <Post posts={ posts } auth={ auth }/>} />
         <Route path='/about_us' element={ <AboutUs />} />
+        <Route path='/contact' element={ <Contact/>}/>
       </Routes>
     </>
   )

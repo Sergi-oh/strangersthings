@@ -10,3 +10,14 @@ form > * {
 .mine {
   font-weight: bold;
 }
+.nav {
+  display: flex;
+  justify-content: space-around;
+  border: solid 1.5px;
+}
+
+@media (max-width: 500px) {
+  nav {
+    flex-direction: column;
+  }
+}
